@@ -51,6 +51,7 @@ class Certificate extends Vault
                 'key_props' =>[
                     'exportable' => false,
                     'kty' => $keyType,
+
                     'key_size' => $keySize,
                     'reuse_key' => false
                 ],
