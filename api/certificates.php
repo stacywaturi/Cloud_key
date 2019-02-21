@@ -53,20 +53,70 @@ switch ($request_method)
 function get($id)
 {
 
+    global $db;
+    $cert = new Certificate($db);
+
+    if($cert->get($id)){
+        $key_arr = array(
+            "name" => $cert->name,
+            "csr" => $cert->csr,
+            "cert" => $cert->certificate,
+            "issuer" => $cert->issuer,
+            "expiry" => $cert->expiry,
+            "created_at" => $cert->created_at
+            );
+
+        // set response code - 200 OK
+        http_response_code(200);
+
+        // make it json format
+        echo json_encode($key_arr);
+    }
+
 }
 
 function get_all_certs()
 {
+    global $db;
+    $cert = new Certificate($db);
+    $stmt = $cert->get_all();
+    $num = $stmt->rowCount();
+    
+    if($num>0){
+        
+        $cert_arr = array();
+        $cert_arr["certificates"] = array();
+        //retrieve table contents
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            //Extract row
+            extract($row);
+            $cert_item = array(
+                "name" => $name,
+                "csr" => $csr,
+                "certificate" => $certificate,
+                "issuer" => $issuer,
+                "expiry" => $expiry,
+                "created_at" => $created_at,
+
+            );
+            array_push($cert_arr["certificates"],$cert_item);
+
+
+        }
+
+        http_response_code(200);
+        echo json_encode($cert_arr,JSON_PRETTY_PRINT);
+
+    }
+
+
 
 }
 function generate_csr()
 {
-
     global $db;
-
     $cert = new Certificate($db);
 //    $key = new Key($db);
-
 
     $name = "";
     $email = "";
@@ -160,9 +210,12 @@ function generate_csr()
 function update_cert()
 {
 
+    global $db;
+
 }
 
 function delete_cert()
 {
+    global $db;
 
 }

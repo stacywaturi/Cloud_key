@@ -132,9 +132,11 @@ function get_all_keys()
             );
 
             array_push($keys_arr["keys"],$key_item);
-            http_response_code(200);
-            echo json_encode($keys_arr);
+
         }
+
+        http_response_code(200);
+        echo json_encode($keys_arr, JSON_PRETTY_PRINT);
     }
 
 }

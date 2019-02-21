@@ -54,7 +54,10 @@ function sign()
             http_response_code(201);
 
             // tell the user
-            echo json_encode(array("message" => "Signature  : ".$key->signature));
+            echo json_encode(array(
+                "Status" => true,
+                "Signature" => $key->signature
+                ));
 
         }
 
@@ -65,7 +68,10 @@ function sign()
             http_response_code(503);
 
             // tell the user
-            echo json_encode(array("message" => "Unable to sign.".$key->keyVault_error));
+            echo json_encode(array(
+                "Status" => false,
+                "Message" => "Unable to sign. ".$key->keyVault_error
+            ));
 
         }
 
