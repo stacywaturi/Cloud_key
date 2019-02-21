@@ -33,6 +33,7 @@ class Certificate
     public $certificate;
     public $previous_id;
     public $created_at;
+    public $updated_at;
     public $expiry;
 
     public $serial_number;
@@ -153,8 +154,6 @@ class Certificate
             try{
                 if( $stmt->execute()) {
 
-                    echo "Inserted key";
-
                     $query2 = "INSERT INTO 
                       " . $this->table_name2 . "
                       (`id`, `name`,`key_id`, `user_id`, `csr`)
@@ -174,6 +173,8 @@ class Certificate
                         var_dump($e->getMessage());
 
                     }
+
+
                 }
 
 
@@ -190,4 +191,66 @@ class Certificate
         }
 
     }
+    function get($id="")
+    {
+        $query = "SELECT * FROM ".$this->table_name2. "WHERE `id`=".$id." LIMIT 1";
+        //prepare query
+        $stmt = $this->conn->prepare($query);
+
+        // echo $query;
+
+        try{
+            if( $stmt->execute())
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // set values to object properties
+            $this->name = $row['name'];
+            $this->csr = $row['csr'];
+            $this->certificate = $row['certificate'];
+            $this->issuer = $row['issuer'];
+            $this->expiry = $row['expiry'];
+            $this->created_at = $row['created_at'];
+
+
+
+            return true;
+
+        } catch(PDOException $exception){
+            echo "Connection error: " . $exception->getMessage();
+        }
+
+        return false;
+
+    }
+
+    function get_all()
+    {
+
+        $query = "SELECT * FROM ".$this->table_name2;
+        //prepare query
+        $stmt = $this->conn->prepare($query);
+
+
+        try{
+            if( $stmt->execute())
+                return $stmt;
+
+        } catch(PDOException $exception){
+            echo "Connection error: " . $exception->getMessage();
+        }
+
+        return false;
+
+
+    }
+
+    function merge(){
+
+    }
+
+
+    function update(){
+
+    }
+
 }

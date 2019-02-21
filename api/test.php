@@ -1,0 +1,18 @@
+<?php
+$cert = '-----BEGIN CERTIFICATE-----
+MIIEADCCAegCAhARMA0GCSqGSIb3DQEBCwUAMHcxCzAJBgNVBAYTAlpBMRAwDgYDVQQIDAdHYXV0ZW5nMRswGQYDVQQKDBJpU29sdiBUZWNobm9sb2dpZXMxFjAUBgNVBAMMDWlzb2x2dGVjaC5jb20xITAfBgkqhkiG9w0BCQEWEmluZm9AaXNvbHZ0ZWNoLmNvbTAeFw0xODEyMDQwOTM0NTZaFw0xOTEyMTQwOTM0NTZaMBQxEjAQBgNVBAMTCWNlcnQyMjExMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMuSzFz60mtjPbtB/pTVya7UEhukXrW8lkem5L/Sbr2RMHWvq2gd1ayOdZRcuss4PWlefLjOcfSovALtb3wxYG0Y58rD9xJM2qyqbpR7DGXRumrGKllGIlPrQ0vs3ePDI8ydzrHNH0yFpWfM90aef+YsFj1sAVIOf44macRyc/7IUhiz5bQUP408LGWn0UygW4HhaDDWtQNllyziaGsrYe1DWuI4LH94uDnOkxW2mXccoYL4Tyr2MQ6gsq2BaloudR72wCy7ZZb4Fhot9TiAnECISocRSL2cJoK4jiLooOPC8crlja6lzvBdh2HvvnKnxG2Mj/O4NcA4LWmCBxK+8FsCAwEAATANBgkqhkiG9w0BAQsFAAOCAgEAVpJAZ4/mFKHzBMjulNEdA4T4HfXAw2seZx0Oyu/oKrkiqeGOHZJmR+nGpa3N/N2D3djCfeCJY3CLrZ+5B2xbbRYH8odO6TRDcZZd06F8UBFF4t0p/qmz7efBxuDVwDDDDrhMjVaZzZc4lkiSPl4fxJUcaQmgfzt5ogIKgX/mf7VIRGgDyMC3pv3Z0ubrGKknqaOD+ThExSjfmRNhlddlpX2UNX4r01qhtMmJbN1sRCbz+O/71o3ApZTP1J04f0vS2e2fYXOQ0Dgbrs0H1tBV0SHG5dF9pIsx76775u4XXesS4t2GHMS+LS3zmysFrqEXM/qFZk0lT0MhLpuxFNTKjrZ0RYWWzneOrTME8UNUCC3ptBbhzG53hTdcwuSd24sYxfkVqGmsLet47/3r1ZkRB8sSA6Nsj4S0YlneM1eWTImLRFYXd9ODC7Zk/BjoC2JQge7WfRfPWJ/JxNO8S19Hre2XOHvFDYHdiBH070/Fcd+nNBTfymDi3DNCtHDnY5VR1FRkLq0NqfV+lt4HCGFdJLmLVFGWpY7wNAOWj/iiiautbApFUbFfWdoSuAAAP5QAcFqcQq3wy7mTo2ar71n9hhUI0LGA3B62nDsPC1Sta0hHovA4t/+0RqasHQ8KUh/0AkHmVAON1q86NiN/0E1blb+LcNTPMci0lBhJXRok+bs=
+-----END CERTIFICATE-----';
+$resource = openssl_pkey_get_public($cert);
+
+if($resource) {
+    $array =openssl_pkey_get_details($resource);
+    $hex = array_map("base64_url_encode", $array["rsa"]);
+}
+
+var_dump($array);
+var_dump($hex);
+
+function base64_url_encode( $data ) {
+    return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+}
+

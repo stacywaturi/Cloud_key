@@ -64,8 +64,7 @@ class Key{
             //Usage is "General" for the "Create Key" request
             $this->usage = "General";
 
-            $this->vault_id = 'ded1772b-feeb-41ac-bd65-95e150b46c79 
-';
+            $this->vault_id = '1320b3cb-860b-4ea4-8a60-a01e138834ff';
             /*Insert Key and attributes into Database
             */
 
@@ -192,6 +191,7 @@ class Key{
             }
 
         }
+
         else{
             $this->keyVault_error = $keyResponse["responseMessage"]["message"];
             return false;
