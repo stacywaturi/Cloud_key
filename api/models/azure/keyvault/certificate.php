@@ -102,14 +102,14 @@ class Certificate extends Vault
     }
    --------------------------------------------------------------------------------
    */
-    public function merge(string $certName, string $fileName)
+    public function merge(string $certName, string $cert)
     {
         $apiCall = "certificates/{$certName}/pending/merge?api-version=2016-10-01";
-        $myfile = fopen("certs/".$fileName,"r") or die("Unable to open file");
-        $cert = fread($myfile, filesize("certs/".$fileName));
-
-        $cert = str_replace("-----BEGIN CERTIFICATE-----\r\n", "", $cert );
-        $cert = str_replace("\r\n-----END CERTIFICATE-----", "", $cert );
+//        $myfile = fopen("certs/".$fileName,"r") or die("Unable to open file");
+//        $cert = fread($myfile, filesize("certs/".$fileName));
+//
+//        $cert = str_replace("-----BEGIN CERTIFICATE-----\r\n", "", $cert );
+//        $cert = str_replace("\r\n-----END CERTIFICATE-----", "", $cert );
 
         $options = [
             'x5c'   => [$cert]

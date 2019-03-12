@@ -1,6 +1,5 @@
 <?php
 
-
 require_once 'vendor/autoload.php';
 
 use Azure\Keyvault\Key as KeyVaultKey;

@@ -101,6 +101,13 @@ class ComposerStaticInitf216436ea9e371140409a0a007bc8c88
                 0 => __DIR__ . '/..' . '/phpspec/prophecy/src',
             ),
         ),
+        'D' => 
+        array (
+            'DocSigner\\' => 
+            array (
+                0 => __DIR__ . '/../..' . '/models',
+            ),
+        ),
         'A' => 
         array (
             'Azure\\' => 

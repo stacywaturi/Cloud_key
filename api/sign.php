@@ -63,7 +63,6 @@ function sign()
 
         // if unable to create the product, tell the user
         else{
-
             // set response code - 503 service unavailable
             http_response_code(503);
 

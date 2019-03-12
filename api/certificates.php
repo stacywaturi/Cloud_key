@@ -211,11 +211,93 @@ function update_cert()
 {
 
     global $db;
+    $cert = new Certificate($db);
+
+    $name = "";
+    $certificate = "";
+
+    //get posted data
+    $data = json_decode(file_get_contents("php://input"),true);
+
+
+    if (!empty(  $data["name"]))
+        $name = $data["name"];
+
+    if (!empty(  $data["certificate"]))
+        $certificate = $data["certificate"];
+
+
+    if(
+        !empty($name) &&
+        !empty($certificate)
+    ) {
+        //set certificate property values
+        $cert->name = $name;
+        $cert->certificate = $certificate;
+
+
+        //Create Key
+        if ($cert->update()) {
+            // set response code - 201 created
+            http_response_code(201);
+
+            // tell the user
+            echo json_encode(array("message" => "Certificate " . $cert->name . " was updated."));
+
+        } // if unable to create the product, tell the user
+        else {
+
+            // set response code - 503 service unavailable
+            http_response_code(503);
+
+            // tell the user
+            echo json_encode(array("message" => "Unable to update certificate.  ".$cert->keyVault_error));
+
+        }
+    }
+    // tell the user data is incomplete
+    else{
+
+        // set response code - 400 bad request
+        http_response_code(400);
+
+        // tell the user
+        echo json_encode(array("message" => "Unable to create certificate. Data is incomplete. "));
+    }
 
 }
 
 function delete_cert()
 {
     global $db;
+
+    $cert = new Certificate($db);
+
+    $data = json_decode(file_get_contents("php://input"));
+
+    if(!empty($data->name)){
+        //set certificate property values
+        $cert->name = $data->name;
+
+        //Delete cert
+        if($cert->delete()){
+            // set response code - 201 created
+            http_response_code(201);
+
+            // tell the user
+            echo json_encode(array("message" => "Certificate ".$cert->name ." was deleted."));
+        }
+
+        // if unable to delete the cert, tell the user
+        else{
+
+            // set response code - 503 service unavailable
+            http_response_code(503);
+
+            // tell the user
+            echo json_encode(array("message" => "Unable to delete certificate."));
+
+        }
+    }
 
 }

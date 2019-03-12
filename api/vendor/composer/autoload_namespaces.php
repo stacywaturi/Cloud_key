@@ -8,5 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'hash\\' => array($baseDir . '/src'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
+    'DocSigner\\' => array($baseDir . '/models'),
     'Azure\\' => array($baseDir . '/models'),
 );

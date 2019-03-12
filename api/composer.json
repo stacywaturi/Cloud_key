@@ -2,12 +2,14 @@
     "name": "stacy/key-vault-php",
     "description": "Key Vault REST API",
     "require": {
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "ext-openssl":"*"
     },
 	"autoload": {
         "psr-0": {
             "Azure\\": "models/",
-            "hash\\": "src/"
+            "hash\\": "src/",
+            "DocSigner\\": "models/"
         }
     },
     "authors": [

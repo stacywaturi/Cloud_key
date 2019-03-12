@@ -240,7 +240,6 @@ function update_key()
         $key->name = $data->name;
         $key->key_type = $data->key_type;
         $key->key_size = $data->key_size;
-
         //Create Key
         if($key->create()){
             // set response code - 201 created

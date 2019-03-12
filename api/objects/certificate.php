@@ -233,6 +233,7 @@ class Certificate
 
         try{
             if( $stmt->execute())
+
                 return $stmt;
 
         } catch(PDOException $exception){
@@ -244,13 +245,97 @@ class Certificate
 
     }
 
-    function merge(){
-
-    }
-
 
     function update(){
 
+        //Append PEM attributes for the cert as openssl only accepts mixed certificate types
+        $cert = "-----BEGIN CERTIFICATE-----\r\n". $this->certificate. "\r\n-----END CERTIFICATE-----";
+        //Extract the public key from the certificate
+        if($this->extract_pub_key($cert)){
+//            $this->public_key = "r5c1scoD2FKeJXohFEQasfQeWTbD5UTqcRk3NdQXb0utJqZlvz9hjsnI3Y04HnDE9VEP56CWP3fOFCPCxCKnhu5QqcYalAJZMUVtyfShhJXgDVrkn9RGYQlxHYowb_Ic-E2_qSQ-vXBtFSez9R2aRNRGIm643Mgir_scOAvIbdUg-KJLyg6RM3b0ghxfyPHit-1MNZav_7ZACgdx5jYaigcgnOOont1Vdf_5EUcUNMGiFvfVE3hJ2SYOSy6H3oPj4T76ByYVhYNitYBM_LNNh0zyGS5DtxKIpnYqaFTC3pqvFiAuT12J_NbbSJh0JWyhuRnEUJkTf4-C6Quabdy2Fw";
+            //Search for this public key in DB
+
+            $query = "SELECT * FROM $this->table_name  WHERE `public_key`= '$this->public_key'";
+            //prepare query
+            $stmt = $this->conn->prepare($query);
+            // echo $query;
+
+            try{
+                if( $stmt->execute())
+                    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+//                    var_dump($row);
+                    if($row['name'] == $this->name) {
+                        $query2 = "UPDATE $this->table_name2 SET `certificate` = '$this->certificate' WHERE `name`= '$this->name'";
+//
+                        $stmt2 = $this->conn->prepare($query2);
+//
+                        try {
+                            if ($stmt2->execute()) {
+                                return true;
+                            }
+                        }
+                        catch(PDOException $exception){
+                                echo "Connection error: " . $exception->getMessage();
+                            }
+                    }
+                    else
+                        $this->keyVault_error = "Error in updating Certificate to Database";
+
+            } catch(PDOException $exception){
+                echo "Connection error: " . $exception->getMessage();
+            }
+
+            return false;
+        }
+
+        else{
+            $this->keyVault_error = "Property x5c has invalid value. X5C must have at least one valid item";
+        }
+
     }
 
+    function extract_pub_key($cert){
+
+        function base64_url_encode( $data ) {
+            return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
+        }
+
+        $resource = openssl_pkey_get_public($cert);
+
+        if($resource) {
+            $array =openssl_pkey_get_details($resource);
+            $key_base64url = array_map("base64_url_encode", $array["rsa"]);
+            $this->public_key = $key_base64url["n"];
+
+            return true;
+        }
+
+        return false;
+
+    }
+
+    function delete()
+    {
+        $query = "DELETE FROM $this->table_name2 WHERE `name`='$this->name'";
+//        $query = "DELETE FROM ".$this->table_name2. "WHERE `name`=".$this->name;
+
+        //prepare query
+        $stmt = $this->conn->prepare($query);
+
+        try{
+            if( $stmt->execute())
+                return true;
+
+        } catch(PDOException $exception){
+            echo "Connection error: " . $exception->getMessage();
+        }
+
+        return false;
+    }
+
+
+
+
+
 }
+
