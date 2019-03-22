@@ -72,7 +72,16 @@ function get($id)
     global $db;
 
     $doc = new Document($db);
-    $doc->get($id);
+
+    if ($doc->get($id)) {
+        $doc_arr = $doc->signature_blocks;
+
+        // set response code - 200 OK
+        http_response_code(200);
+
+        // make it json format
+        echo json_encode($doc_arr, JSON_PRETTY_PRINT);
+    }
 
 
 }
@@ -114,7 +123,7 @@ function update_doc()
             http_response_code(201);
 
             // tell the user
-            echo json_encode(array("message" => "Document succesfully signed."));
+            echo json_encode(array("message" => "Document succesfully signed."),JSON_PRETTY_PRINT);
 
         }
 
@@ -124,7 +133,7 @@ function update_doc()
             http_response_code(503);
 
             // tell the user
-            echo json_encode(array("message" => "Unable to sign document. ".$doc->document_signer_error));
+            echo json_encode(array("message" => "Unable to sign document. ".$doc->document_signer_error),JSON_PRETTY_PRINT);
 
         }
     }
@@ -136,7 +145,7 @@ function update_doc()
         http_response_code(400);
 
         // tell the user
-        echo json_encode(array("message" => "Unable to updated key. Data is incomplete."));
+        echo json_encode(array("message" => "Unable to updated key. Data is incomplete."),JSON_PRETTY_PRINT);
     }
 
 

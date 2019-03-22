@@ -18,6 +18,7 @@ class Document
     private $table_name2 = '`certificates`';
     public $signature_setup_id;
     public $document_reference;
+    public $signature_blocks;
     public $certificate_name;
     public $document_signature;
     public $document_signature_base64;
@@ -54,8 +55,15 @@ class Document
     function get($id)
     {
         $getResponse = $this->document->getSignatureBlocks($id);
-        var_dump($getResponse['data']['signature_blocks']);
-//      var_dump($this->document->getSignatureBlocks($id));
+        if($getResponse['responsecode']==200){
+            $this->signature_blocks = $getResponse['data']['signature_blocks'];
+//            var_dump($getResponse['data']['signature_blocks']);
+            return true;
+        }
+
+        return false;
+
+
     }
 
     function update()
@@ -127,6 +135,9 @@ class Document
                             return true;
                         }
 
+                    }
+                    else{
+                        $this->document_signer_error = "Initialize signing document parameters failed!";
                     }
                 }
                 else{

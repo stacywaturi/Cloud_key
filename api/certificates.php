@@ -127,7 +127,7 @@ function generate_csr()
     $state = "";
     $key_size = 2048;
     $key_type = "RSA";
-
+    $user_id = "";
     //get posted data
     $data = json_decode(file_get_contents("php://input"),true);
 
@@ -159,6 +159,8 @@ function generate_csr()
     if (!empty( $data["key_type"]))
         $key_type =  $data["key_type"];
 
+    if (!empty( $data["user_id"]))
+        $user_id =  $data["user_id"];
 
     if(
         !empty($name) &&
@@ -176,14 +178,28 @@ function generate_csr()
         $cert->key_size = $key_size;
         $cert->key_type = $key_type;
 
+        $cert->user_id =  $user_id;
 
         //Create Key
         if ($cert->create()) {
+
+            $cert_arr = array(
+                "key_id" => $cert->key_id,
+                "key" => $cert->public_key,
+                "cert_id" =>$cert->id,
+                "name" => $cert->name,
+                "csr" => $cert->csr,
+                "cert" => $cert->certificate,
+                "issuer" => $cert->issuer,
+                "expiry" => $cert->expiry,
+                "created_at" => $cert->created_at
+            );
+
             // set response code - 201 created
             http_response_code(201);
 
             // tell the user
-            echo json_encode(array("message" => "Certificate " . $cert->name . " was created."));
+            echo json_encode(array("message" => "Certificate " . $cert->name . " was created.", "data" => $cert_arr));
 
         } // if unable to create the product, tell the user
         else {

@@ -136,7 +136,7 @@ function get_all_keys()
         }
 
         http_response_code(200);
-        echo json_encode($keys_arr, JSON_PRETTY_PRINT);
+        echo json_encode((array)$keys_arr, JSON_PRETTY_PRINT);
     }
 
 }

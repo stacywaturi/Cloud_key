@@ -53,6 +53,8 @@ class Certificate
     public $public_key;
 
 
+
+
     public function __construct($db)
     {
         $this->conn = $db;
@@ -125,7 +127,8 @@ class Certificate
             //Generate a unique random ID for the Keys ID column
             $this->key_id = uniqid(rand(),false);
 
-            $this->user_id = "5115274945c501a7ba0f4e";
+           // $this->user_id = "5115274945c501a7ba0f4e";
+
             //Usage is "General" for the "Create Key" request
             $this->usage = "Certificate";
 
