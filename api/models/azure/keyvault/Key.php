@@ -8,7 +8,7 @@
 * @date 2018-11-12
 *
 */
-namespace Azure\Keyvault;
+namespace Azure\KeyVault;
 
 class Key extends Vault
 {
@@ -85,6 +85,7 @@ class Key extends Vault
     Request Body: alg{signing/verification algorithm identifier}, value{string}
     --------------------------------------------------------------------------------
     */
+
    public function sign(string $keyID, string $algorithm, string $value)
    {
 
@@ -123,5 +124,22 @@ class Key extends Vault
        ];
 
        return $this->requestApi('POST', $apiCall, $options);
+    }
+
+    /*Deletes a key of any type from storage in Azure Key Vault.
+     The delete key operation cannot be used to remove individual versions of a key.
+     This operation removes the cryptographic material associated with the key,
+     which means the key is not usable for Sign/Verify, Wrap/Unwrap or Encrypt/Decrypt operations.
+     This operation requires the keys/delete permission.
+     --------------------------------------------------------------------------------
+     DELETE {vaultBaseUrl}/keys/{key-name}?api-version=7.0
+     --------------------------------------------------------------------------------
+  */
+    public function delete(string $keyID)
+    {
+        $apiCall = "keys/{$keyID}?api-version=2016-10-01";
+        $response = $this->requestApi('DELETE', $apiCall);
+
+        return $response;
     }
 }

@@ -6,7 +6,7 @@
  * Time: 09:49
  */
 
-namespace Docsigner;
+namespace DocSigner;
 
 
 abstract class DocumentSigner
@@ -60,16 +60,21 @@ abstract class DocumentSigner
                 $apiCall,
                 [
                     'headers' => [
-//                        'User-Agent'    => 'browser/1.0',
-//                        'Accept'        => 'application/json',
-                        'Content-Type'  => 'application/json'
-////                        'Authorization' => "Bearer " . $this->accessToken
+                        'User-Agent'    => 'browser/1.0',
+                        'Accept'        => 'application/json',
+                        'Content-Type'  => 'application/json',
+                        'accept-encoding' =>'gzip, deflate',
+                        'content-length' => '5000',
+                        'Connection' => 'keep-alive',
+
                     ],
                     'json' => $json
                 ]
             );
 
-           // return $result;
+//            var_dump($result);
+          //  var_dump($result->getBody()->getContents());
+            //return $result;
             return $this->setOutput(
                 $result->getStatusCode(),
                 $result->getReasonPhrase(),

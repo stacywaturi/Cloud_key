@@ -1,20 +1,33 @@
 <?php
 
 //get database connection
-include_once 'config/database.php';
+include_once 'config/Database.php';
 
 //instantiate key object
-include_once 'objects/key.php';
+include_once 'objects/Key.php';
 
 $database = new Database();
 $db = $database->getConnection();
 
 $request_method= $_SERVER["REQUEST_METHOD"];
 
+/* API ROUTE DEFINITION ------ /sign
+   --------------------------------------------------------------------------------
+   SIGN WITH KEY:
+   POST {baseURL}/sign?
+   Request Body:
+       {
+           "id": "10792036075cc31001ee483",
+            "algorithm":"RS256",
+            "hash":"Y7zRoOtcqjw_Ik3TNDLPSlP4VjrYkCvIJdM8ckOalvA="
+
+        }
+    --------------------------------------------------------------------------------
+   */
+
 switch ($request_method)
 {
     case "POST":
-        //Create Key
         sign();
         break;
 
@@ -28,7 +41,6 @@ switch ($request_method)
 
 function sign()
 {
-    //echo "creating key";
 
     global $db;
 
@@ -38,12 +50,12 @@ function sign()
     $data = json_decode(file_get_contents("php://input"));
 
     if(
-        !empty($data->name) &&
+        !empty($data->id) &&
         !empty($data->algorithm)&&
         !empty($data->hash)
     ){
         //set key property values
-        $key->name = $data->name;
+        $key->id = $data->id;
         $key->algorithm = $data->algorithm;
         $key->hash = $data->hash;
 
@@ -60,7 +72,6 @@ function sign()
                 ));
 
         }
-
         // if unable to create the product, tell the user
         else{
             // set response code - 503 service unavailable

@@ -8,7 +8,7 @@
 *
 */
 
-namespace Azure\Keyvault;
+namespace Azure\KeyVault;
 
 
 class Certificate extends Vault

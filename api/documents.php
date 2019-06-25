@@ -7,12 +7,37 @@
  */
 
 //get database connection
-include_once 'config/database.php';
+include_once 'config/Database.php';
 
 //instantiate document object
-include_once 'objects/document.php';
+include_once 'objects/Document.php';
 
 
+/* API ROUTE DEFINITION ------ /documents.
+
+    --------------------------------------------------------------------------------
+   GET DOCUMENT BY ID:
+   GET {baseURL}/certificates??id=C:\\Users\\Stacy\\Desktop\\Document signer\\Doc25062.docx
+
+    --------------------------------------------------------------------------------
+    UPDATE/SIGN  CERTIFICATE :
+    PUT {baseURL}/documents?
+    {
+      	"signature_setup_id": "{52EE61CC-11B5-4855-A394-BC69163FFC0D}",
+        "document_reference": "C:\\Users\\Stacy\\Desktop\\Document signer\\Doc25062.docx",
+        "certificate_string": "-----BEGIN CERTIFICATE-----\r\nMIIELjCCAhYCAhA..
+                                ...oMA0GCSq\njD4G72\r\n
+                               -----END CERTIFICATE-----\r\n",
+        "key_id": "15327034615d0ca1ba0096b"
+        **Optional**
+        "signature_tex": "This is a signature",
+        "signature_image_reference": "C:\\Users\\Stacy\\Desktop\\Document signer\\signatureimage.png",
+        "digest_algorithm": "SHA256",
+        "service_id": "localFileSystem",
+    }
+
+    --------------------------------------------------------------------------------
+   */
 
 $database = new Database();
 $db = $database->getConnection();
@@ -61,11 +86,6 @@ switch ($request_method)
 
 }
 
-function get_all_docs()
-{
-
-}
-
 function get($id)
 {
 
@@ -86,44 +106,78 @@ function get($id)
 
 }
 
-function create_doc()
-{
-
-}
-
-function delete_doc()
-{
-
-}
-
 function update_doc()
 {
-
-    //echo "creating key";
-
     global $db;
 
     $doc = new Document($db);
 
+    $signature_setup_id = "";
+    $document_reference = "";
+    $certificate_string = "";
+    $key_id = "";
+
+    //Defaults for optional
+    $signature_tex =  "This is a signature";
+    $signature_image_reference = null;
+    $digest_algorithm=  "SHA256";
+    $service_id =  "localFileSystem";
+
     //get posted data
-    $data = json_decode(file_get_contents("php://input"));
+    $data = json_decode(file_get_contents("php://input"),true);
+
+    if (!empty($data["signature_setup_id"]))
+        $signature_setup_id = $data["signature_setup_id"];
+
+    if (!empty($data["document_reference"]))
+        $document_reference= $data["document_reference"];
+
+    if (!empty($data["certificate_string"]))
+        $certificate_string = $data["certificate_string"];
+
+    if (!empty($data["key_id"]))
+        $key_id = $data["key_id"];
+
+    if (!empty($data["signature_tex"]))
+        $signature_tex = $data["signature_tex"];
+
+    if (!empty($data["signature_image_reference"]))
+        $signature_image_reference = $data["signature_image_reference"];
+
+    if (!empty($data["digest_algorithm"]))
+        $digest_algorithm = $data["digest_algorithm"];
+
+
+    if (!empty($data["service_id"]))
+        $service_id = $data["service_id"];
+
 
     if(
-        !empty($data->signature_setup_id)&&
-        !empty($data->document_reference)&&
-        !empty($data->certificate_name)
+        !empty($signature_setup_id)&&
+        !empty($document_reference)&&
+        !empty($certificate_string)&&
+        !empty($key_id )
     ){
         //set key property values
-        $doc->signature_setup_id = $data->signature_setup_id;
-        $doc->document_reference = $data->document_reference;
-        $doc->certificate_name = $data->certificate_name;
+        $doc->signature_setup_id = $signature_setup_id;
+        $doc->document_reference = strval($document_reference);
+        $doc->certificate_string = $certificate_string;
+        $doc->key_id             = $key_id;
+
+        $doc->optional_params = array(
+            "signature_tex" => $signature_tex,
+            "signature_image_reference" => $signature_image_reference,
+            "service_id" => $service_id,
+            "digest_algorithm" => $digest_algorithm
+        );
+
         //Create Key
         if($doc->update()){
             // set response code - 201 created
-            http_response_code(201);
+            http_response_code(200);
 
             // tell the user
-            echo json_encode(array("message" => "Document succesfully signed."),JSON_PRETTY_PRINT);
+            echo json_encode(array("message" => "Document successfully signed."),JSON_PRETTY_PRINT);
 
         }
 
@@ -148,6 +202,20 @@ function update_doc()
         echo json_encode(array("message" => "Unable to updated key. Data is incomplete."),JSON_PRETTY_PRINT);
     }
 
+}
 
+
+function create_doc()
+{
+
+}
+
+function delete_doc()
+{
+
+}
+
+function get_all_docs()
+{
 
 }

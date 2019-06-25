@@ -15,6 +15,7 @@ class CloudKeyDocSigner extends DocumentSigner
     {
         parent::__construct($apiDetails);
     }
+
     /* Expected return: String type - This server is running !!!
     */
 
@@ -22,12 +23,11 @@ class CloudKeyDocSigner extends DocumentSigner
     {
         $apiCall = "test";
 
-        var_dump($this->getBaseUrl());
+
         $response = $this->requestApi('GET', $apiCall);
 
         return $response;
     }
-
 
     /*Get List of Signature Blocks in a given document
      URL: /SigningOperationsResource/GetSignatureBlocks
@@ -50,7 +50,7 @@ class CloudKeyDocSigner extends DocumentSigner
     Array of Signature Block Objects
    --------------------------------------------------------------------------------
 */
-    public function getSignatureBlocks(string $documentReference)
+    public function getSignatureBlocks( $documentReference)
     {
         $apiCall = "GetSignatureBlocks";
         $serviceId =  "localFileSystem";
@@ -93,53 +93,56 @@ class CloudKeyDocSigner extends DocumentSigner
 
    --------------------------------------------------------------------------------
 */
-    public function getDigestValue(string $signatureSetupId, string $documentReference, string $certificate)
+    public function getDigestValue( $signatureSetupId,  $documentReference,  $certificate, $optional)
     {
         $apiCall = "GetDigestValue";
 
-        $signatureTex =  "This is a signature";
-        $signatureImageReference =  null;
-        $digestAlgorithm=  "SHA256";
-        $serviceId =  "localFileSystem";
+//        $signatureTex =  "This is a signature";
+//        $signatureImageReference = null;
+//        $digestAlgorithm=  "SHA256";
+//        $serviceId =  "localFileSystem";
         $options =
         [
             'signature_setup_id'=> $signatureSetupId,
-            'signature_tex' => $signatureTex,
+            'signature_tex' => $optional["signature_tex"],
             'document_reference' =>$documentReference,
-            'signature_image_reference'=> $signatureImageReference,
-            'digest_algorithm' =>$digestAlgorithm,
-            'service_id'=> $serviceId,
+            'signature_image_reference'=> $optional["signature_image_reference"],
+            'digest_algorithm' =>$optional["digest_algorithm"],
+            'service_id'=> $optional["service_id"],
             'certificate_string'=> $certificate
         ];
+
+     //   var_dump($options);
 
         return $this->requestApi('POST', $apiCall, $options);
 
     }
 
+
     /*URL: http://localhost:8080/SigningOperationsResource/InsertSignedValue
- Request Body - JSON Object with the following properties:
-digest_value_base64 – the digest value as a reference. Was returned from the previous call.
-signed_value – This is the signed value after signing the digest
+     Request Body - JSON Object with the following properties:
+    digest_value_base64 – the digest value as a reference. Was returned from the previous call.
+    signed_value – This is the signed value after signing the digest
 
--------------------------------------------------------------------------------
- Example of JSON body:
-{
-"digest_value_base64": "kvULLbSECwaD2z+JtSv8EbglRtGZ+A8ixGvbflKUwog=",
-"signed_value": "hYFTYE1JzTQMyBAGSWi.....ETd+VmobvQroaj2JG5Sb1gv8KAJbquevkCSw=="
-}
- Expected return: JSON Object with the following properties:
-200 OK
-400 Bad Request – With error message
-status – either true or false
-error – if false status, an error description should appear here, else will be null
- Returned JSON Object Example:
-{
-"status": false,
-"error": null
-}
+    -------------------------------------------------------------------------------
+     Example of JSON body:
+    {
+    "digest_value_base64": "kvULLbSECwaD2z+JtSv8EbglRtGZ+A8ixGvbflKUwog=",
+    "signed_value": "hYFTYE1JzTQMyBAGSWi.....ETd+VmobvQroaj2JG5Sb1gv8KAJbquevkCSw=="
+    }
+     Expected return: JSON Object with the following properties:
+    200 OK
+    400 Bad Request – With error message
+    status – either true or false
+    error – if false status, an error description should appear here, else will be null
+     Returned JSON Object Example:
+    {
+    "status": false,
+    "error": null
+    }
 
---------------------------------------------------------------------------------
-*/
+    --------------------------------------------------------------------------------
+    */
     public function insertSignedValue($digestValue, $signedValue)
     {
         $apiCall = "InsertSignedValue";
@@ -150,6 +153,9 @@ error – if false status, an error description should appear here, else will be
                 'signed_value' => $signedValue
 
             ];
+
+     //   var_dump($options);
+
 
 
         return $this->requestApi('POST', $apiCall, $options);

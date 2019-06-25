@@ -5,7 +5,7 @@
 *  
 */
 
-namespace Azure\Keyvault;
+namespace Azure\KeyVault;
 
 abstract class Vault
 {
